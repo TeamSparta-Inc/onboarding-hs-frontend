@@ -13,7 +13,12 @@ export class AuthService {
     ) {}
 
     async signUp(signUpDto : SignUpDto) : Promise<{user : User}>{
-        return
+
+        const { username, email, password } = signUpDto
+        const { refreshToken } = await this.createRefreshToken({ username })
+        const newUser = await this.usersService.create({ username, email, password, refreshToken})
+
+        return { user: newUser }
     }
 
     async signIn(){
