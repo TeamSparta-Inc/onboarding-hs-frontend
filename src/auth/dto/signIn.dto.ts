@@ -1,10 +1,10 @@
-import { IsEmail, IsNotEmpty, IsString, MaxLength, MinLength, isNotEmpty } from "class-validator";
+import { IsNotEmpty, IsString, MaxLength, MinLength, isNotEmpty } from "class-validator";
 import { MAX_PASSWORD, MIN_PASSWORD } from "./constant";
 
 
-export class LoginDto{
+export class SignInDto{
     @IsNotEmpty()
-    @IsEmail()
+    @IsString()
     readonly username : string
 
     @IsNotEmpty()
