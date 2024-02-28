@@ -15,4 +15,8 @@ export class UsersService {
 
       return newUser.save()
     }
+
+    async findOne(username : string) : Promise<User | undefined>{
+      return this.userModel.findOne({ username })
+    }
 }
