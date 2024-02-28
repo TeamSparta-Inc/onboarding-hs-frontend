@@ -3,6 +3,7 @@ import { UsersService } from 'src/users/users.service'
 import { JwtService } from '@nestjs/jwt'
 import { SignUpDto } from './dto/signUp.dto';
 import { User } from 'src/users/schemas/user.schemas';
+import { SignInDto } from './dto/signin.dto';
 
 
 @Injectable()
@@ -12,22 +13,28 @@ export class AuthService {
       private jwtService: JwtService
     ) {}
 
-    async signUp(signUpDto : SignUpDto) : Promise<{user : User}>{
+    async signUp(signUpDto : SignUpDto) : Promise<{username : string}>{
 
-        const { username, email, password } = signUpDto
+        const { username, password } = signUpDto
         const { refreshToken } = await this.createRefreshToken({ username })
-        const newUser = await this.usersService.create({ username, email, password, refreshToken})
+        const user = await this.usersService.create({ username, password, refreshToken})
 
-        return { user: newUser }
+        return { username : user.username }
     }
 
-    async signIn(){
-        return
+    async signIn( signInDto : SignInDto ) : Promise<{ accessToken: string; refreshToken: string }>{
+
+        const { username } = signInDto
+
+        const user = this.usersService.findOne(username)
+
+        if(!user) throw new Error('존재하지 않는 유저입니다')
+
+        const { accessToken } = await this.createAccessToken({username})
+        const { refreshToken } = await this.createRefreshToken({username})
+
+        return { accessToken, refreshToken }
     }
-
-    async logOut(){}
-
-    async register(){}
 
     async createAccessToken( username : Pick<SignUpDto, 'username'>){
         const payload = { username }
