@@ -1,26 +1,30 @@
 import { Body, Controller, Post, Headers } from '@nestjs/common'
 import { AuthService } from './auth.service'
-import { SignUpDto } from './dto/signUp.dto'
-import { SignInDto } from './dto/signin.dto'
+import { SignUpDto, SignUpResponseDto } from './dto/signUp.dto'
+import { SignInDto, SignInResponseDto } from './dto/signin.dto'
+import { ApiOperation, ApiTags } from '@nestjs/swagger'
 
 @Controller('auth')
+@ApiTags('auth API')
 export class AuthController{
     constructor(private authService : AuthService){}
 
     @Post('signUp')
-    async signUp(@Body() signUpDto: SignUpDto): Promise<{ username : string }>{
+    @ApiOperation({ summary: '회원가입 API', description: '회원가입을 시도하고 로그인에 성공할 경우 유저네임을 반환한다.'})
+    async signUp(@Body() signUpDto: SignUpDto): Promise<SignUpResponseDto>{
         const { username } = await this.authService.signUp(signUpDto)
-
         return { username }
     }
 
     @Post('signIn')
-    async signIn(@Body() SignInDto: SignInDto) {
+    @ApiOperation({ summary: '로그인 API', description: '로그인을 시도하고 로그인에 성공할 경우 액세스 토큰과 리프레시 토큰을 반환한다.'})
+    async signIn(@Body() SignInDto: SignInDto) : Promise<SignInResponseDto> {
         const { accessToken, refreshToken } = await this.authService.signIn(SignInDto)
         return { accessToken, refreshToken }
     }
 
     @Post('refreshToken')
+    @ApiOperation({ summary: '토큰 리프레시 API', description: '리프레시 토큰을 받아 새로운 액세스 토큰을 반환한다.'})
     async refreshtoken(@Headers('authorization') refreshToken: string){
         const newAccessToken = this.authService.refreshAccessToken(refreshToken)
         return { success : true, accessToken : newAccessToken}
