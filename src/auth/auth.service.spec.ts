@@ -3,6 +3,12 @@ import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 
+const testUser = {
+  username: 'testUser',
+  password: '1234',
+  refreshToken: 'testRefreshToken',
+};
+
 describe('AuthService', () => {
   let authService: AuthService;
   let jwtService: JwtService;
@@ -40,21 +46,37 @@ describe('AuthService', () => {
     expect(usersService).toBeDefined();
   });
 
-  describe('signUp', () => {
-    it('이메일과 패스워드를 입력하면 유저 네임을 반환합니다.', async () => {
+  describe('AuthService', () => {
+    it('회원가입 성공시 유저 네임을 반환합니다.', async () => {
       const signUpDto = { username: 'testUser', password: 'testPassword' };
       const expectedResponse = { username: 'testUser' };
 
       jest
         .spyOn(authService, 'createRefreshToken')
         .mockResolvedValueOnce({ refreshToken: 'testRefreshToken' });
-      jest.spyOn(usersService, 'create').mockResolvedValueOnce({
-        username: 'testUser',
-        password: '1234',
-        refreshToken: 'testRefreshToken',
-      });
+      jest.spyOn(usersService, 'create').mockResolvedValueOnce(testUser);
 
       const result = await authService.signUp(signUpDto);
+
+      expect(result).toEqual(expectedResponse);
+    });
+
+    it('로그인 성공시 Access Token과 Refresh Token을 반환합니다.', async () => {
+      const signInDto = { username: 'testUser', password: 'testPassword' };
+      const expectedResponse = {
+        accessToken: '1q2w3e4r',
+        refreshToken: '4r3e2w1q',
+      };
+
+      jest.spyOn(usersService, 'findOne').mockResolvedValueOnce(testUser);
+      jest
+        .spyOn(authService, 'createAccessToken')
+        .mockResolvedValueOnce({ accessToken: 'testRefreshToken' });
+      jest
+        .spyOn(authService, 'createRefreshToken')
+        .mockResolvedValueOnce({ refreshToken: 'testRefreshToken' });
+
+      const result = await authService.signIn(signInDto);
 
       expect(result).toEqual(expectedResponse);
     });
