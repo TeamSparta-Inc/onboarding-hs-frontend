@@ -9,6 +9,9 @@ const testUser = {
   refreshToken: 'testRefreshToken',
 };
 
+const testRefreshToken = 'testRefreshToken';
+const testAccessToken = 'testAccessToken';
+
 describe('AuthService', () => {
   let authService: AuthService;
   let jwtService: JwtService;
@@ -53,7 +56,7 @@ describe('AuthService', () => {
 
       jest
         .spyOn(authService, 'createRefreshToken')
-        .mockResolvedValueOnce({ refreshToken: 'testRefreshToken' });
+        .mockResolvedValueOnce({ refreshToken: testRefreshToken });
       jest.spyOn(usersService, 'create').mockResolvedValueOnce(testUser);
 
       const result = await authService.signUp(signUpDto);
@@ -64,19 +67,35 @@ describe('AuthService', () => {
     it('로그인 성공시 Access Token과 Refresh Token을 반환합니다.', async () => {
       const signInDto = { username: 'testUser', password: 'testPassword' };
       const expectedResponse = {
-        accessToken: '1q2w3e4r',
-        refreshToken: '4r3e2w1q',
+        accessToken: testAccessToken,
+        refreshToken: testRefreshToken,
       };
 
       jest.spyOn(usersService, 'findOne').mockResolvedValueOnce(testUser);
       jest
         .spyOn(authService, 'createAccessToken')
-        .mockResolvedValueOnce({ accessToken: 'testRefreshToken' });
+        .mockResolvedValueOnce({ accessToken: testAccessToken });
       jest
         .spyOn(authService, 'createRefreshToken')
-        .mockResolvedValueOnce({ refreshToken: 'testRefreshToken' });
+        .mockResolvedValueOnce({ refreshToken: testRefreshToken });
 
       const result = await authService.signIn(signInDto);
+
+      expect(result).toEqual(expectedResponse);
+    });
+
+    it('Refresh 토큰을 통해 새로운 Access Token을 발급합니다.', async () => {
+      const refreshToken = testRefreshToken;
+      const expectedResponse = { accessToken: testAccessToken };
+      jest
+        .spyOn(jwtService, 'verify')
+        .mockReturnValueOnce({ username: testUser.username });
+      jest.spyOn(usersService, 'findOne').mockResolvedValueOnce(testUser);
+      jest
+        .spyOn(authService, 'createAccessToken')
+        .mockResolvedValueOnce({ accessToken: testAccessToken });
+
+      const result = await authService.refreshAccessToken(refreshToken);
 
       expect(result).toEqual(expectedResponse);
     });
