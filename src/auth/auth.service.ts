@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { SignUpDto } from './dto/signUp.dto';
 import { SignInDto } from './dto/signin.dto';
 
@@ -55,14 +55,21 @@ export class AuthService {
   async refreshAccessToken(
     refreshToken: string,
   ): Promise<{ accessToken: string }> {
-    const decodedRefreshToken = this.jwtService.verify(refreshToken);
+    try {
+      const decodedRefreshToken = this.jwtService.verify(refreshToken);
 
-    const username = decodedRefreshToken.username;
-    const user = await this.usersService.findOne(username);
+      const username = decodedRefreshToken.username;
+      const user = await this.usersService.findOne(username);
 
-    const { accessToken } = await this.createAccessToken({
-      username: user.username,
-    });
-    return { accessToken };
+      const { accessToken } = await this.createAccessToken({
+        username: user.username,
+      });
+      return { accessToken };
+    } catch (error) {
+      if (error instanceof TokenExpiredError)
+        throw new Error('리프레시 토큰이 만료되었습니다.');
+
+      throw new Error('유효하지 않은 형식의 리프레시 토큰입니다.');
+    }
   }
 }
