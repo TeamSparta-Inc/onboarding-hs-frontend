@@ -13,6 +13,9 @@ import { Document } from "mongoose";
   
     @Prop()
     password: string;
+
+    @Prop()
+    refreshToken : string;
   }
   
-  export const UserSchema = SchemaFactory.createForClass(User);
+  export const UserModel = SchemaFactory.createForClass(User);
