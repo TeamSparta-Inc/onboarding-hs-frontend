@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { SignUpDto } from './dto/signUp.dto';
@@ -13,6 +17,12 @@ export class AuthService {
 
   async signUp(signUpDto: SignUpDto): Promise<{ username: string }> {
     const { username, password } = signUpDto;
+
+    const existingUser = await this.usersService.findOne(username);
+    if (existingUser) {
+      throw new ConflictException('이미 가입된 유저네임입니다.');
+    }
+
     const { refreshToken } = await this.createRefreshToken({ username });
     const user = await this.usersService.create({
       username,
