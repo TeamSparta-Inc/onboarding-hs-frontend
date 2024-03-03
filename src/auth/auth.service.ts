@@ -7,6 +7,7 @@ import { UsersService } from '../users/users.service';
 import { JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { SignUpDto } from './dto/signUp.dto';
 import { SignInDto } from './dto/signin.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -23,10 +24,12 @@ export class AuthService {
       throw new ConflictException('이미 가입된 유저네임입니다.');
     }
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const { refreshToken } = await this.createRefreshToken({ username });
     const user = await this.usersService.create({
       username,
-      password,
+      password: hashedPassword,
       refreshToken,
     });
 
