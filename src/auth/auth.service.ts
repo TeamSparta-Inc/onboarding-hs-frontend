@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { SignUpDto } from './dto/signUp.dto';
@@ -28,9 +28,9 @@ export class AuthService {
   ): Promise<{ accessToken: string; refreshToken: string }> {
     const { username } = signInDto;
 
-    const user = this.usersService.findOne(username);
+    const user = await this.usersService.findOne(username);
 
-    if (!user) throw new Error('존재하지 않는 유저입니다');
+    if (!user) throw new NotFoundException('존재하지 않는 유저입니다');
 
     const { accessToken } = await this.createAccessToken({ username });
     const { refreshToken } = await this.createRefreshToken({ username });
