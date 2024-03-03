@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService, TokenExpiredError } from '@nestjs/jwt';
@@ -39,11 +40,16 @@ export class AuthService {
   async signIn(
     signInDto: SignInDto,
   ): Promise<{ accessToken: string; refreshToken: string }> {
-    const { username } = signInDto;
+    const { username, password } = signInDto;
 
     const user = await this.usersService.findOne(username);
 
     if (!user) throw new NotFoundException('존재하지 않는 유저입니다');
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      throw new UnauthorizedException('비밀번호가 맞지 않습니다.');
+    }
 
     const { accessToken } = await this.createAccessToken({ username });
     const { refreshToken } = await this.createRefreshToken({ username });
