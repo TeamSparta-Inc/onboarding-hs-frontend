@@ -17,7 +17,11 @@ export class UsersService {
     return newUser.save();
   }
 
-  async findOne(username: string): Promise<User | undefined> {
+  async findOne(
+    username: string,
+  ): Promise<
+    { username: string; password: string; refreshToken: string } | undefined
+  > {
     return this.userModel.findOne({ username });
   }
 }
