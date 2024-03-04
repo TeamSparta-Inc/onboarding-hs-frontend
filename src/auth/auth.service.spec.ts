@@ -2,6 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
+import { SignInDto } from './dto/signin.dto';
+import { NotFoundException, UnauthorizedException } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 
 const testUser = {
   username: 'testUser',
@@ -65,7 +68,10 @@ describe('AuthService', () => {
     });
 
     it('로그인 성공시 Access Token과 Refresh Token을 반환합니다.', async () => {
-      const signInDto = { username: 'testUser', password: 'testPassword' };
+      const signInDto = {
+        username: testUser.username,
+        password: testUser.password,
+      };
       const expectedResponse = {
         accessToken: testAccessToken,
         refreshToken: testRefreshToken,
@@ -78,22 +84,49 @@ describe('AuthService', () => {
       jest
         .spyOn(authService, 'createRefreshToken')
         .mockResolvedValueOnce({ refreshToken: testRefreshToken });
+      jest
+        .spyOn(bcrypt, 'compare')
+        .mockImplementation(() => Promise.resolve(true));
 
       const result = await authService.signIn(signInDto);
 
       expect(result).toEqual(expectedResponse);
     });
 
+    it('유저를 찾을 수 없을 때 NotFoundException을 발생시킵니다.', async () => {
+      const signInDto: SignInDto = {
+        username: 'testUser',
+        password: 'testPassword',
+      };
+
+      jest.spyOn(usersService, 'findOne').mockResolvedValueOnce(undefined);
+
+      await expect(authService.signIn(signInDto)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('비밀번호가 일치하지 않을 때 UnauthorizedException을 발생시킵니다.', async () => {
+      const signInDto: SignInDto = {
+        username: 'testUser',
+        password: 'wrongPassword',
+      };
+
+      jest.spyOn(usersService, 'findOne').mockResolvedValueOnce(testUser);
+      jest
+        .spyOn(bcrypt, 'compare')
+        .mockImplementation(() => Promise.resolve(false));
+
+      await expect(authService.signIn(signInDto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
     it('Refresh 토큰을 통해 새로운 Access Token을 발급합니다.', async () => {
       const refreshToken = testRefreshToken;
       const expectedResponse = { accessToken: testAccessToken };
-      jest
-        .spyOn(jwtService, 'verify')
-        .mockReturnValueOnce({ username: testUser.username });
+
       jest.spyOn(usersService, 'findOne').mockResolvedValueOnce(testUser);
-      jest
-        .spyOn(authService, 'createAccessToken')
-        .mockResolvedValueOnce({ accessToken: testAccessToken });
 
       const result = await authService.refreshAccessToken(refreshToken);
 
