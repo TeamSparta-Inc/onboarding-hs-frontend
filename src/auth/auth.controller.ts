@@ -1,7 +1,7 @@
 import { Body, Controller, Post, Headers, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpDto, SignUpResponseDto } from './dto/signUp.dto';
-import { SignInDto, SignInResponseDto } from './dto/signin.dto';
+import { SignInDto, SignInResponseDto } from './dto/signIn.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from './auth.guard';
 
@@ -39,7 +39,7 @@ export class AuthController {
     summary: '토큰 리프레시 API',
     description: '리프레시 토큰을 받아 새로운 액세스 토큰을 반환한다.',
   })
-  async refreshtoken(@Headers('authorization') refreshToken: string) {
+  async refreshToken(@Headers('authorization') refreshToken: string) {
     const newAccessToken = this.authService.refreshAccessToken(refreshToken);
     return { success: true, accessToken: newAccessToken };
   }
