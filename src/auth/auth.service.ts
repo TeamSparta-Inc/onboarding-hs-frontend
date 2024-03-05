@@ -26,6 +26,7 @@ export class AuthService {
     }
 
     const salt = 10;
+    console.log(password, salt);
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const { refreshToken } = await this.createRefreshToken({ username });
