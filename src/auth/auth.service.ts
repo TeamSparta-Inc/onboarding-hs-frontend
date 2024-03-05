@@ -25,8 +25,8 @@ export class AuthService {
       throw new ConflictException('이미 가입된 유저네임입니다.');
     }
 
-    const salt = bcrypt.genSaltSync(10);
-    const hashedPassword = bcrypt.hashSync(password, salt);
+    const salt = 10;
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     const { refreshToken } = await this.createRefreshToken({ username });
     const user = await this.usersService.create({
