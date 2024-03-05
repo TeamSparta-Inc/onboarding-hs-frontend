@@ -29,6 +29,7 @@ export class AuthController {
       '로그인을 시도하고 로그인에 성공할 경우 액세스 토큰과 리프레시 토큰을 반환한다.',
   })
   async signIn(@Body() SignInDto: SignInDto): Promise<SignInResponseDto> {
+    console.log(SignInDto);
     const { accessToken, refreshToken } =
       await this.authService.signIn(SignInDto);
     return { accessToken, refreshToken };
@@ -41,6 +42,7 @@ export class AuthController {
     description: '리프레시 토큰을 받아 새로운 액세스 토큰을 반환한다.',
   })
   async refreshToken(@Headers('authorization') refreshToken: string) {
+    console.log(refreshToken);
     const newAccessToken = this.authService.refreshAccessToken(refreshToken);
     return { success: true, accessToken: newAccessToken };
   }
