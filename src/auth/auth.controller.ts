@@ -17,6 +17,7 @@ export class AuthController {
       '회원가입을 시도하고 로그인에 성공할 경우 유저네임을 반환한다.',
   })
   async signUp(@Body() signUpDto: SignUpDto): Promise<SignUpResponseDto> {
+    console.log(signUpDto);
     const { username } = await this.authService.signUp(signUpDto);
     return { username };
   }
