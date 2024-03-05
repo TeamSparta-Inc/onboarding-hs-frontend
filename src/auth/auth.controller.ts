@@ -1,7 +1,7 @@
 import { Body, Controller, Post, Headers, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignUpDto, SignUpResponseDto } from './dto/signUp.dto';
-import { SignInDto, SignInResponseDto } from './dto/signIn.dto';
+import { SignUpDto, SignUpResponseDto } from './dto/signup.dto';
+import { SignInDto, SignInResponseDto } from './dto/signin.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from './auth.guard';
 
