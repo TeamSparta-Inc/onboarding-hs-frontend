@@ -18,7 +18,7 @@ export default function GNB() {
               />
             </Link>
             <h1 className="flex bold ml-4 items-center text-center">
-              Hyesung onboading page
+              김혜성 온보딩 페이지 헤헤
             </h1>
           </div>
         </div>

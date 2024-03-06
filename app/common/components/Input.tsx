@@ -1,8 +1,9 @@
-interface InputProps {
+import { InputHTMLAttributes } from "react";
+
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   type: string;
   placeholder: string;
   value?: string;
-  onChange?: () => void;
 }
 
 export default function Input({
@@ -10,6 +11,7 @@ export default function Input({
   placeholder,
   value,
   onChange,
+  ...props
 }: InputProps) {
   return (
     <input
@@ -18,6 +20,7 @@ export default function Input({
       value={value}
       onChange={onChange}
       className="w-full py-2 px-4 rounded-md border border-gray-300 focus:outline-none focus:border-blue-500"
+      {...props}
     />
   );
 }
