@@ -5,7 +5,6 @@ import Input from "@/app/common/components/Input";
 import FormCard from "../common/components/FormCard";
 import { fetchSignup } from "../apis/auth";
 import { FormEvent } from "react";
-import { STORAGE_KEYS, setToStorage } from "../storage/storageService";
 
 export default function SignUp() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -19,6 +18,11 @@ export default function SignUp() {
       //handle error
       return false;
     }
+
+    await fetchSignup({
+      username: email,
+      password,
+    });
   }
 
   return (

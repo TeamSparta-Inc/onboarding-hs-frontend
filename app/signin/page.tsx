@@ -37,7 +37,7 @@ export default function Signin() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <FormCard title="로그인 하세요">
+      <FormCard title="Sign In">
         <Input type="email" name="email" placeholder="이메일" />
         <Input type="password" name="password" placeholder="비밀번호" />
         <Button>로그인</Button>

@@ -11,16 +11,18 @@ export default function Home() {
   useEffect(() => {
     const accessToken = getFromStorage(STORAGE_KEYS.ACCESS_TOKEN);
 
-    if (accessToken) setIsLogged(true);
+    setIsLogged(!!accessToken);
   }, []);
 
   return (
     <main className="flex flex-col items-center  mt-10 justify-center gap-2 m-auto">
-      {isLogged && (
+      {!isLogged ? (
         <>
           <LinkButton href={PATHS.SIGN_IN} text="로그인" />
           <LinkButton href={PATHS.SIGN_UP} text="회원가입" />
         </>
+      ) : (
+        <h1>환영합니다!</h1>
       )}
     </main>
   );
