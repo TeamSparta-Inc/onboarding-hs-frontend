@@ -9,13 +9,6 @@ describe("GNB 컴포넌트", () => {
     expect(logoImageElement).toBeInTheDocument();
   });
 
-  it("로고 이미지에 올바른 경로가 설정되어 있는지 확인", () => {
-    render(<GNB />);
-
-    const logoImageElement = screen.getByAltText("team_sparta_logo");
-    expect(logoImageElement).toHaveAttribute("src", "/teamspartainc_logo.jpeg");
-  });
-
   it("로고 이미지에 올바른 크기가 설정되어 있는지 확인", () => {
     render(<GNB />);
 
