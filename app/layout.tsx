@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import GNB from "@/app/common/components/GNB";
+import { HackleProvider, createInstance } from "@hackler/react-sdk";
+import Head from "next/head";
 
 const inter = Inter({ subsets: ["latin"] });
 

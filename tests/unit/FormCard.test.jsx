@@ -14,7 +14,7 @@ describe("FormCard 컴포넌트", () => {
     expect(titleElement).toBeInTheDocument();
   });
 
-  it("자식 컴포넌트가 올바르게 렌더링되는지 확인", () => {
+  it("자식 컴포넌트가  올바르게 렌더링되는지 확인", () => {
     render(
       <FormCard>
         <div>내용</div>

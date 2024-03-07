@@ -26,7 +26,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "tests/unit/LinkButton.test.jsx"
+    "tests/unit/LinkButton.test.jsx",
+    "tests/unit/Storage.test.jsx"
   ],
   "exclude": ["node_modules"]
 }
