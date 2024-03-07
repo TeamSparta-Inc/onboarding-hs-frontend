@@ -1,4 +1,5 @@
 import { DEFAULT_PATH, END_POINTS } from "@/constants/endpoints";
+import * as Sentry from "@sentry/nextjs";
 
 interface FetchSignin {
   username: string;
@@ -11,17 +12,41 @@ interface RefreshToken {
   token: string;
 }
 
-export async function fetchSignin({ username, password }: FetchSignin) {
-  const response = await fetch(DEFAULT_PATH + END_POINTS.SIGN_IN, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password }),
-  });
-
-  return response.json();
+interface FetchSigninResponse {
+  accessToken: string;
+  refreshToken: string;
 }
 
-export async function fetchSignup({ username, password }: FetchSignup) {
+interface FetchSignupResponse {
+  username: string;
+}
+
+interface RefreshTokenResponse {
+  accessToken: string;
+}
+
+export async function fetchSignin({
+  username,
+  password,
+}: FetchSignin): Promise<FetchSigninResponse> {
+  try {
+    const response = await fetch(DEFAULT_PATH + END_POINTS.SIGN_IN, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+
+    return response.json();
+  } catch (error) {
+    Sentry.captureException(error);
+    throw new Error("로그인에 실패했습니다.");
+  }
+}
+
+export async function fetchSignup({
+  username,
+  password,
+}: FetchSignup): Promise<FetchSignupResponse> {
   const response = await fetch(DEFAULT_PATH + END_POINTS.SIGN_UP, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -31,7 +56,9 @@ export async function fetchSignup({ username, password }: FetchSignup) {
   return response.json();
 }
 
-export async function refreshToken({ token }: RefreshToken) {
+export async function refreshToken({
+  token,
+}: RefreshToken): Promise<RefreshTokenResponse> {
   const response = await fetch(DEFAULT_PATH + END_POINTS.REFRESH_TOKEN, {
     method: "POST",
     headers: {

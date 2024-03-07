@@ -9,7 +9,7 @@ export default function Home() {
   const [isLogged, setIsLogged] = useState(false);
 
   useEffect(() => {
-    const accessToken = getFromStorage(STORAGE_KEYS.ACCESS_TOKEN);
+    const accessToken = getFromStorage<string>(STORAGE_KEYS.ACCESS_TOKEN);
 
     setIsLogged(!!accessToken);
   }, []);

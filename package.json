@@ -13,6 +13,9 @@
     "cypress:run": "cypress run"
   },
   "dependencies": {
+    "@hackler/react-sdk": "^11.30.0",
+    "@sentry/nextjs": "^7.105.0",
+    "@teamsparta/cross-platform-logger": "^1.4.3",
     "next": "14.1.1",
     "react": "^18",
     "react-dom": "^18"
