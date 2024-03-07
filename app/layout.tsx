@@ -19,13 +19,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <Head>
-        <script src="https://cdn.jsdelivr.net/npm/@hackler/javascript-sdk@11.30.0/lib/index.browser.umd.min.js"></script>
-        <script>
-          window.hackleClient =
-          Hackle.createInstance("mHLlaqSiEjXOIaUzVPmxr5mZDEF5wTS9");
-        </script>
-      </Head>
       <body className="w-full max-w-screen-xl mx-auto min-h-screen bg-white">
         <GNB />
         <div className="w-full h-full flex justify-center">{children}</div>
