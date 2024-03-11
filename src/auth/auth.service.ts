@@ -9,6 +9,7 @@ import { JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { SignUpDto } from './dto/signup.dto';
 import { SignInDto } from './dto/signIn.dto';
 import * as bcrypt from 'bcrypt';
+import { ValidateTokenDto } from './dto/validateToken.dto';
 
 @Injectable()
 export class AuthService {
@@ -56,6 +57,16 @@ export class AuthService {
     const { refreshToken } = await this.createRefreshToken({ username });
 
     return { accessToken, refreshToken };
+  }
+
+  async validateToken(validateTokenDto: ValidateTokenDto) {
+    const { accessToken } = validateTokenDto;
+    try {
+      const decodedAccessToken = this.jwtService.verify(accessToken);
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 
   async createAccessToken(username: Pick<SignUpDto, 'username'>) {

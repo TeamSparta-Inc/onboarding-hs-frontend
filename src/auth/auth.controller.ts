@@ -4,6 +4,7 @@ import { SignUpDto, SignUpResponseDto } from './dto/signup.dto';
 import { SignInDto, SignInResponseDto } from './dto/signIn.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from './auth.guard';
+import { ValidateTokenDto } from './dto/validateToken.dto';
 
 @Controller('auth')
 @ApiTags('auth API')
@@ -31,6 +32,16 @@ export class AuthController {
     const { accessToken, refreshToken } =
       await this.authService.signIn(SignInDto);
     return { accessToken, refreshToken };
+  }
+
+  @Post('validateToken')
+  @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: '토큰 검증 API',
+    description: '액세스 토큰을 검증한다.',
+  })
+  async validateToken(@Body() validateTokenDto: ValidateTokenDto) {
+    return this.authService.validateToken(validateTokenDto);
   }
 
   @Post('refreshToken')
